@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>斗罗大陆·绝世唐门 MUD V5</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#18233b;--line:#2b3857;--text:#edf3ff;--muted:#9eabc4;--gold:#e6bd68;--cyan:#69d5ff;--red:#e56b75;--green:#72d39b;--purple:#b89cff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#070b16,#111a30 55%,#080c17);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}button{border:0;color:var(--text);cursor:pointer}.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:76px}
+.screen{display:none;min-height:100vh;padding:22px 16px}.screen.active{display:block}
+.logo{padding:55px 8px 30px;text-align:center}.logo h1{font-size:34px;margin:0 0 10px;letter-spacing:3px}.logo p{color:var(--muted);margin:0}
+.menu{display:grid;gap:12px}.btn{background:linear-gradient(135deg,#1d2b49,#152039);border:1px solid var(--line);border-radius:16px;padding:16px 18px;text-align:left;box-shadow:0 8px 22px #0003}.btn strong{display:block;font-size:17px}.btn small{display:block;color:var(--muted);margin-top:5px}.btn.primary{border-color:#866b30;background:linear-gradient(135deg,#3a2e18,#241e15)}.btn.danger{border-color:#71353c}.btn:active{transform:scale(.985)}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}.top h2{margin:0;font-size:22px}.back{width:42px;height:42px;border-radius:13px;background:var(--panel);border:1px solid var(--line);font-size:22px}
+.card{background:linear-gradient(145deg,#141e34,#0f1729);border:1px solid var(--line);border-radius:18px;padding:15px;margin:12px 0}.card h3{margin:0 0 10px}.muted{color:var(--muted)}.gold{color:var(--gold)}.cyan{color:var(--cyan)}.green{color:var(--green)}.red{color:var(--red)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#0d1526;border:1px solid var(--line);padding:11px;border-radius:13px}.stat b{font-size:19px}.bar{height:9px;background:#263149;border-radius:20px;overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;background:var(--cyan)}.bar.hp i{background:var(--green)}.bar.sp i{background:var(--purple)}
+input,select,textarea{width:100%;background:#0c1424;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;outline:none}label{display:block;margin:12px 0 6px;color:#c7d1e6}
+.choice{display:grid;gap:10px}.choice button{padding:14px;border-radius:14px;background:#101a2e;border:1px solid var(--line);text-align:left}.choice button.selected{border-color:var(--gold);background:#292318}
+.nav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(728px,calc(100% - 20px));background:#0d1525ee;backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:20px;padding:7px;display:none;grid-template-columns:repeat(5,1fr);gap:5px;z-index:10}.nav.show{display:grid}.nav button{background:transparent;border-radius:13px;padding:9px 4px;color:var(--muted);font-size:12px}.nav button.active{background:#1c2942;color:var(--gold)}.nav span{display:block;font-size:19px;margin-bottom:2px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.tag{font-size:12px;border:1px solid var(--line);padding:4px 8px;border-radius:20px;color:var(--muted)}
+.scene{min-height:190px;border-radius:20px;border:1px solid var(--line);padding:18px;position:relative;overflow:hidden;background:radial-gradient(circle at 80% 20%,#28466b88,transparent 35%),linear-gradient(145deg,#111d35,#0a1020)}.scene:after{content:"";position:absolute;inset:auto -30px -65px;height:130px;background:#172a46aa;transform:skewY(-8deg)}.scene>*{position:relative;z-index:1}.scene h1{margin:8px 0;font-size:27px}.log{max-height:220px;overflow:auto;font-size:13px;color:#c5d0e4}.log p{margin:7px 0;border-bottom:1px solid #26314a;padding-bottom:7px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.actions button{padding:13px;border-radius:13px;background:#17233a;border:1px solid var(--line)}.actions button.main{background:linear-gradient(135deg,#5c4720,#3b2e18);border-color:#8b6b31}
+.modal{position:fixed;inset:0;background:#02050bbd;backdrop-filter:blur(8px);display:none;align-items:end;z-index:30}.modal.show{display:flex}.sheet{width:100%;max-width:760px;margin:auto 0 0;background:#10192b;border:1px solid var(--line);border-radius:24px 24px 0 0;padding:18px;max-height:88vh;overflow:auto}.sheet h2{margin-top:0}.close{float:right;background:#1c2940;border-radius:10px;padding:8px 11px}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:#121d31;border:1px solid var(--line);padding:10px 15px;border-radius:12px;display:none;z-index:50}.toast.show{display:block}
+@media(min-width:700px){.screen{padding-top:34px}.menu{grid-template-columns:1fr 1fr}.actions{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<section id="title" class="screen active">
+ <div class="logo"><div class="tag">MOBILE MUD · V5</div><h1>斗罗大陆</h1><h2>绝世唐门</h2><p>一个会随着你的选择继续运转的斗罗世界</p></div>
+ <div class="menu">
+  <button class="btn primary" onclick="newGame()"><strong>⚔ 新游戏</strong><small>创建新的魂师角色，开始冒险</small></button>
+  <button class="btn" onclick="showSaves()"><strong>▣ 存档</strong><small>查看、覆盖或删除本地存档</small></button>
+  <button class="btn" onclick="loadGame()"><strong>↻ 读取存档</strong><small>继续上一次的冒险</small></button>
+  <button class="btn" onclick="intro()"><strong>ⓘ 游戏介绍</strong><small>了解世界、战斗与各项系统</small></button>
+ </div>
+</section>
+
+<section id="create" class="screen">
+ <div class="top"><button class="back" onclick="go('title')">‹</button><h2>创建角色</h2></div>
+ <div class="card">
+  <h3>第一步 · 基础资料</h3>
+  <label>名字</label><input id="name" placeholder="输入“余勾”可读取余勾专属资料" oninput="checkYu()">
+  <div id="yuHint" class="muted" style="margin-top:7px"></div>
+  <label>性别</label><select id="sex"><option>男</option><option>女</option><option>其他</option></select>
+  <label>年龄</label><input id="age" type="number" min="5" max="80" value="8">
+  <label>容貌</label><input id="looks" placeholder="例如：清秀、英俊、普通……">
+  <label>家庭</label><textarea id="family" rows="2" placeholder="家庭背景、亲属、经济状况等"></textarea>
+  <label>出生地</label><input id="birth" placeholder="可留空，由系统生成">
+ </div>
+ <div class="card"><h3>第二步 · 初始天赋</h3><div class="choice">
+  <button id="custom" onclick="pickMode('custom')"><b>① 自己选择武魂</b><br><span class="muted">自己决定武魂与基础天赋，系统会检查世界合理性。</span></button>
+  <button id="random" onclick="pickMode('random')"><b>② 系统随机</b><br><span class="muted">由世界规则随机生成武魂、先天魂力与天赋倾向。</span></button>
+ </div></div>
+ <button class="btn primary" style="width:100%" onclick="finishCreate()">创建角色 →</button>
+</section>
+
+<section id="talent" class="screen">
+ <div class="top"><button class="back" onclick="go('create')">‹</button><h2>选择武魂</h2></div>
+ <div class="card"><h3 id="talentTitle">初始天赋</h3><div id="talentBody"></div></div>
+ <button class="btn primary" style="width:100%" onclick="enterWorld()">确认并进入世界</button>
+</section>
+
+<section id="hall" class="screen">
+ <div class="top"><div style="flex:1"><div class="tag">游戏大厅</div><h2 id="hallName">—</h2></div><button class="back" onclick="go('title')">⚙</button></div>
+ <div id="quick"></div>
+ <div class="scene"><div class="tag" id="placeTag">当前位置</div><h1 id="placeName">—</h1><p id="sceneText" class="muted">世界正在等待你的行动。</p></div>
+ <div class="card"><div class="row"><b>当前剧情</b><span class="tag" id="questTag">序章</span></div><p id="questText" class="muted">尚未开始主线。</p></div>
+ <div class="actions">
+  <button class="main" onclick="explore()">🧭 探索</button><button onclick="story()">📜 剧情</button>
+  <button onclick="openPage('battle')">⚔ 战斗</button><button onclick="openPage('char')">👤 角色</button>
+ </div>
+ <div class="card"><h3>行动日志</h3><div id="log" class="log"></div></div>
+</section>
+
+<section id="explore" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>探索</h2></div>
+ <div class="scene"><div class="tag">探索区域</div><h1 id="explorePlace">—</h1><p class="muted">选择行动会推进时间，并可能触发事件、NPC或战斗。</p></div>
+ <div class="card"><h3>移动</h3><div class="actions">
+  <button onclick="move('学院区')">前往学院区</button><button onclick="move('城镇街道')">前往城镇</button>
+  <button onclick="move('城外荒地')">前往城外</button><button onclick="move('北境森林')">前往森林</button>
+ </div></div>
+ <div class="card"><h3>行动</h3><div class="actions"><button onclick="train()">修炼</button><button onclick="rest()">休息</button><button onclick="searchArea()">观察环境</button><button onclick="npcEncounter()">寻找人物</button></div></div>
+</section>
+
+<section id="battle" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>战斗</h2></div>
+ <div id="battleBox" class="card"></div>
+ <div id="battleActions" class="actions"></div>
+</section>
+
+<section id="char" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>角色面板</h2></div>
+ <div id="charBox"></div>
+</section>
+
+<section id="bag" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>背包</h2></div><div id="bagBox"></div>
+</section>
+
+<section id="task" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>任务</h2></div><div id="taskBox"></div>
+</section>
+
+<section id="rel" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>关系</h2></div><div id="relBox"></div>
+</section>
+
+<section id="romance" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>情缘</h2></div><div id="romanceBox"></div>
+</section>
+
+<section id="map" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>地图</h2></div>
+ <div class="card"><h3>天斗帝国·北境区域</h3><div id="mapBox"></div></div>
+</section>
+
+<section id="system" class="screen">
+ <div class="top"><button class="back" onclick="openPage('hall')">‹</button><h2>系统</h2></div>
+ <div class="menu"><button class="btn" onclick="saveGame()">保存当前游戏</button><button class="btn" onclick="exportSave()">导出存档</button><button class="btn" onclick="importSave()">导入存档</button><button class="btn danger" onclick="resetGame()">删除当前角色</button></div>
+</section>
+</div>
+
+<nav id="nav" class="nav">
+ <button onclick="openPage('hall')"><span>⌂</span>大厅</button><button onclick="openPage('bag')"><span>▣</span>背包</button><button onclick="openPage('task')"><span>◆</span>任务</button><button onclick="openPage('rel')"><span>♡</span>感情</button><button onclick="openPage('system')"><span>☷</span>系统</button>
+</nav>
+<div id="modal" class="modal"><div class="sheet"><button class="close" onclick="closeModal()">×</button><div id="modalBody"></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY="douluo_mud_v5_real_save";
+let S=null, mode="random", enemy=null;
+const $=id=>document.getElementById(id);
+function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$('nav').classList.toggle('show',id==='hall'||id==='explore'||id==='battle'||id==='char'||id==='bag'||id==='task'||id==='rel'||id==='romance'||id==='map'||id==='system');}
+function openPage(id){if(!S){toast("请先创建角色");return} go(id); renderAll()}
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+function newGame(){go('create'); $('name').value='';$('age').value=8;$('looks').value='';$('family').value='';$('birth').value='';$('yuHint').textContent='';pickMode('random')}
+function pickMode(m){mode=m;$('custom').classList.toggle('selected',m==='custom');$('random').classList.toggle('selected',m==='random')}
+function checkYu(){let n=$('name').value.trim(); if(n==='余勾'){ $('yuHint').innerHTML='<span class="gold">✓ 已识别余勾专属角色档案。创建后将读取既定设定。</span>'; $('age').value=6;$('sex').value='男';$('looks').value='皮肤较白';$('family').value='特殊穿越者背景（游戏内逐步揭示）'} else $('yuHint').textContent=''}
+function finishCreate(){
+ let n=$('name').value.trim();if(!n){toast("请先输入名字");return}
+ if(n==='余勾'){S={name:'余勾',sex:'男',age:6,looks:'皮肤较白',family:'特殊穿越者背景',birth:'天斗帝国北境方向',level:23,sp:23,maxSp:23,hp:230,maxHp:230,martial:'烛龙',innate:10,mode:'yu',place:'天斗帝国·北境沿海方向·普通魂师学院',day:1,hour:8,items:['基础恢复药×2'],rings:['第一魂环·待记录'],skills:['烛龙·基础运转'],gold:50,exp:0,quest:'序章：进入新的世界',questDone:false,relations:{'霍雨浩':20,'王冬':10},romance:{},log:[]};}
+ else {let age=+$('age').value||8;S={name:n,sex:$('sex').value,age,looks:$('looks').value||'普通',family:$('family').value||'普通家庭',birth:$('birth').value||'天斗帝国某城',level:1,sp:10,maxSp:10,hp:100,maxHp:100,martial:'未觉醒',innate:0,mode,place:'北境小镇',day:1,hour:8,items:['面包×2'],rings:[],skills:[],gold:20,exp:0,quest:'序章：觉醒武魂',questDone:false,relations:{},romance:{},log:[]}}
+ renderTalent();go('talent')
+}
+function renderTalent(){
+ $('talentTitle').textContent=S.name==='余勾'?'余勾·专属档案':'初始武魂与天赋';
+ if(S.name==='余勾'){ $('talentBody').innerHTML='<p>系统检测到特殊角色：<b class="gold">余勾</b></p><div class="grid2"><div class="stat">年龄<br><b>6岁</b></div><div class="stat">魂力<br><b class="cyan">23级</b></div><div class="stat">武魂<br><b>烛龙</b></div><div class="stat">先天魂力<br><b>10级</b></div></div><p class="muted">已读取既定设定。网页版本与文字版 RPG 独立。</p>';return}
+ if(mode==='custom'){$('talentBody').innerHTML='<label>武魂名称</label><input id="wm" value="普通兽武魂"><label>先天魂力</label><input id="inn" type="number" min="0" max="10" value="5"><p class="muted">系统会限制明显违反世界规则的数值。</p>'}
+ else {let arr=[['蓝银草',3],['白虎',8],['柔骨兔',7],['玄水龟',6],['器武魂·短刃',5],['风狼',6]];let a=arr[Math.floor(Math.random()*arr.length)];S.martial=a[0];S.innate=a[1];S.maxSp=a[1];S.sp=a[1];$('talentBody').innerHTML=`<div class="grid2"><div class="stat">随机武魂<br><b>${a[0]}</b></div><div class="stat">先天魂力<br><b>${a[1]}级</b></div></div><p class="muted">这是本次随机结果。你可以返回重新随机。</p>`}
+}
+function enterWorld(){if(S.name!=='余勾'&&mode==='custom'){S.martial=$('wm').value||'普通武魂';S.innate=Math.max(0,Math.min(10,+$('inn').value||0));S.maxSp=S.innate||1;S.sp=S.maxSp;S.skills=['基础武魂技']} S.log.unshift(`第${S.day}日 ${S.hour}:00 · ${S.name}踏入斗罗世界。`);saveSilent();go('hall');renderAll();toast("角色创建完成")}
+function advance(h=1){S.hour+=h;while(S.hour>=24){S.hour-=24;S.day++;}if(S.hour<6)S.scene='深夜';}
+function addLog(t){S.log.unshift(`第${S.day}日 ${String(S.hour).padStart(2,'0')}:00 · ${t}`);S.log=S.log.slice(0,40)}
+function explore(){advance(1);let r=Math.random();if(r<.22){startBattle()}else if(r<.42){npcEncounter()}else {let texts=['风从北方吹来，远处传来魂兽的低吼。','你发现了一处被遗落的旧营地。','街角的魂导器店刚刚开门。','学院方向传来钟声。'];let t=texts[Math.floor(Math.random()*texts.length)];addLog(t);toast("探索发现");renderAll()}}
+function move(p){S.place=p;advance(1);addLog(`你移动到了${p}。`);renderAll();toast("已抵达 "+p)}
+function train(){advance(2);S.exp+=Math.floor(Math.random()*3)+1;if(S.sp<S.maxSp)S.sp=Math.min(S.maxSp,S.sp+2);addLog("你进行了修炼，魂力得到恢复，积累了一些修炼感悟。");if(S.level<10&&S.exp>=10){S.exp-=10;S.level++;S.maxSp++;S.sp=S.maxSp;addLog(`修炼突破！魂力达到${S.level}级。`);toast("突破！")}renderAll()}
+function rest(){advance(6);S.hp=S.maxHp;S.sp=S.maxSp;addLog("休息完毕，身体与魂力恢复。");renderAll()}
+function searchArea(){advance(1);if(Math.random()<.35){S.items.push('普通魂兽材料');addLog("你在附近发现了一份普通魂兽材料。")}else addLog("你仔细观察了周围，没有发现异常。");renderAll()}
+function npcEncounter(){advance(1);let names=['学院学员','路过的商队魂师','年轻女学员','学院老师'];let n=names[Math.floor(Math.random()*names.length)];addLog(`你遇到了${n}。你可以选择交谈、离开或观察。`);showModal(`<h2>偶遇·${n}</h2><p class="muted">人物会根据地点、时间与后续剧情再次出现。</p><div class="actions"><button onclick="npcTalk('${n}')">交谈</button><button onclick="addLog('你没有打扰对方。');closeModal();renderAll()">离开</button></div>`)}
+function npcTalk(n){addLog(`你与${n}进行了简短交流。`);closeModal();renderAll()}
+function startBattle(){enemy={name:['风狼','十年魂兽·赤尾兔','铁甲兽'][Math.floor(Math.random()*3)],hp:70+S.level*8,max:70+S.level*8,atk:10+S.level*2};addLog(`遭遇${enemy.name}，战斗开始！`);go('battle');renderBattle()}
+function renderBattle(){if(!enemy){$('battleBox').innerHTML='<p class="muted">当前没有战斗。</p>';return}$('battleBox').innerHTML=`<div class="row"><h3>敌人：${enemy.name}</h3><span class="tag">${enemy.hp}/${enemy.max} HP</span></div><div class="bar hp"><i style="width:${Math.max(0,enemy.hp/enemy.max*100)}%"></i></div><hr style="border-color:#26314a;border-width:1px 0 0"><div class="row"><b>${S.name}</b><span>${S.hp}/${S.maxHp} HP · ${S.sp}/${S.maxSp} 魂力</span></div><div class="bar hp"><i style="width:${Math.max(0,S.hp/S.maxHp*100)}%"></i></div>`;$('battleActions').innerHTML='<button class="main" onclick="attack()">普通攻击</button><button onclick="skill()">武魂技</button><button onclick="defend()">防御</button><button onclick="flee()">逃跑</button>'}
+function enemyTurn(mult=1){let dmg=Math.max(1,Math.floor(enemy.atk*mult-Math.random()*4));S.hp=Math.max(0,S.hp-dmg);addLog(`${enemy.name}对你造成${dmg}点伤害。`);if(S.hp<=0){addLog("你重伤倒地。");saveSilent();enemy=null;toast("战斗失败，已重伤");openPage('char')}}
+function attack(){let dmg=10+S.level*3+Math.floor(Math.random()*8);enemy.hp-=dmg;addLog(`你发动普通攻击，造成${dmg}点伤害。`);if(enemy.hp<=0)return winBattle();enemyTurn();renderBattle()}
+function skill(){if(S.sp<2){toast("魂力不足");return}S.sp-=2;let dmg=18+S.level*4+Math.floor(Math.random()*10);enemy.hp-=dmg;addLog(`你施展武魂技，造成${dmg}点伤害。`);if(enemy.hp<=0)return winBattle();enemyTurn(1.15);renderBattle()}
+function defend(){S.sp=Math.min(S.maxSp,S.sp+1);addLog("你采取防御姿态，下一次伤害降低。");enemyTurn(.45);renderBattle()}
+function flee(){if(Math.random()<.65){addLog("你成功脱离战斗。");enemy=null;openPage('hall')}else{addLog("逃跑失败！");enemyTurn();renderBattle()}}
+function winBattle(){S.gold+=5;S.exp+=3;S.items.push('魂兽材料');addLog(`你击败了${enemy.name}，获得5枚魂币与魂兽材料。`);enemy=null;toast("战斗胜利");openPage('hall')}
+function story(){showModal(`<h2>${S.quest}</h2><p>你目前位于：<b>${S.place}</b></p><p class="muted">主线剧情会根据你的行动推进。这里不会强制让世界围着你转，NPC、时间和事件都有自己的节奏。</p><div class="actions"><button onclick="advance(1);addLog('你继续沿着当前线索行动。');closeModal();renderAll()">继续调查</button><button onclick="closeModal()">稍后再说</button></div>`)}
+function renderAll(){if(!S)return;$('hallName').textContent=S.name;$('placeName').textContent=S.place;$('placeTag').textContent=`第${S.day}日 · ${String(S.hour).padStart(2,'0')}:00`;$('explorePlace').textContent=S.place;$('questTag').textContent=S.level>=10?'成长阶段':'序章';$('questText').textContent=S.quest;$('log').innerHTML=S.log.map(x=>`<p>${x}</p>`).join('');$('quick').innerHTML=`<div class="grid2"><div class="stat">等级<br><b class="gold">${S.level}级</b></div><div class="stat">魂力<br><b class="cyan">${S.sp}/${S.maxSp}</b></div><div class="stat">生命<br><b class="green">${S.hp}/${S.maxHp}</b></div><div class="stat">魂币<br><b>${S.gold}</b></div></div>`;renderChar();renderBag();renderTasks();renderRel();renderMap();renderBattle()}
+function renderChar(){$('charBox').innerHTML=`<div class="card"><h3>【魂师面板】</h3><div class="grid2"><div class="stat">姓名<br><b>${S.name}</b></div><div class="stat">性别<br><b>${S.sex}</b></div><div class="stat">年龄<br><b>${S.age}岁</b></div><div class="stat">魂力<br><b>${S.level}级</b></div><div class="stat">武魂<br><b>${S.martial}</b></div><div class="stat">先天魂力<br><b>${S.innate}级</b></div></div><p>容貌：${S.looks}</p><p>家庭：${S.family}</p><p>出生地：${S.birth}</p><p>当前位置：${S.place}</p></div><div class="card"><h3>魂环 / 魂技</h3><p>${S.rings.join('、')||'暂无魂环记录'}</p><p>${S.skills.join('、')||'暂无魂技'}</p></div>`}
+function renderBag(){$('bagBox').innerHTML=`<div class="card"><div class="row"><h3>物品</h3><span class="gold">${S.gold} 魂币</span></div>${S.items.map((x,i)=>`<div class="row" style="padding:9px 0;border-bottom:1px solid #26314a"><span>${x}</span><span class="tag">物品</span></div>`).join('')}</div>`}
+function renderTasks(){$('taskBox').innerHTML=`<div class="card"><h3>主线任务</h3><p><b>${S.quest}</b></p><p class="muted">完成关键事件后自动推进。不要急于追赶主角线，世界会按自身时间运行。</p></div><div class="card"><h3>当前进度</h3><div class="bar"><i style="width:${Math.min(100,S.exp*10)}%"></i></div><p class="muted">${S.exp}/10 成长积累</p></div>`}
+function stage(v){return v>=100?'情深不渝':v>=90?'情深':v>=80?'情根':v>=70?'喜欢':v>=60?'心动':v>=50?'好感':v>=40?'在意':v>=30?'认识':v>=20?'留意':'陌生'}
+function renderRel(){$('relBox').innerHTML=Object.keys(S.relations).length?Object.entries(S.relations).map(([n,v])=>`<div class="card"><div class="row"><b>${n}</b><span>${v} · ${stage(v)}</span></div><div class="bar"><i style="width:${v}%"></i></div></div>`).join(''):'<div class="card muted">目前还没有建立明确关系的角色。</div>'}
+function renderMap(){$('mapBox').innerHTML=['北境小镇','学院区','城镇街道','城外荒地','北境森林'].map(x=>`<button class="btn" style="width:100%;margin:6px 0" onclick="move('${x}')">${x}${S.place===x?' · 当前':''}</button>`).join('')}
+function showSaves(){let x=localStorage.getItem(KEY);showModal(`<h2>存档</h2><p class="muted">${x?'发现1份本地存档，可覆盖保存或读取。':'目前没有本地存档。'}</p><div class="actions"><button onclick="loadGame();closeModal()">读取</button><button onclick="saveGame();closeModal()">覆盖保存</button></div>`)}
+function saveSilent(){if(S)localStorage.setItem(KEY,JSON.stringify(S))}
+function saveGame(){saveSilent();toast("存档成功")}
+function loadGame(){let x=localStorage.getItem(KEY);if(!x){toast("没有找到存档");return}S=JSON.parse(x);closeModal();go('hall');renderAll();toast("读取成功")}
+function resetGame(){if(confirm("确定删除当前角色和本地存档？")){localStorage.removeItem(KEY);S=null;go('title');toast("已删除")}}
+function exportSave(){if(!S)return;let a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(S));a.download='douluo-mud-save.json';a.click()}
+function importSave(){let i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{let f=i.files[0],r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);saveSilent();go('hall');renderAll();toast("导入成功")}catch(e){toast("存档格式错误")}};r.readAsText(f)};i.click()}
+function intro(){showModal(`<h2>游戏介绍</h2><p>这是一个独立的手机 MUD 网页版。核心循环是：创建角色 → 探索 → 遭遇 → 战斗/交互 → 时间推进 → 成长 → 主线与支线。</p><p><b>世界原则：</b>魂力、武魂、魂环与成长遵守斗罗世界逻辑；玩家不是默认的世界中心；NPC与时间会独立运行。</p><p><b>余勾：</b>名字输入“余勾”会加载专属设定。网页存档与聊天中的文字 RPG 完全分离。</p><p><b>存档：</b>使用浏览器本地存储，也支持 JSON 导出/导入。</p>`)}
+function showModal(h){$('modalBody').innerHTML=h;$('modal').classList.add('show')}
+function closeModal(){$('modal').classList.remove('show')}
+renderAll();
+</script>
+</body></html>
